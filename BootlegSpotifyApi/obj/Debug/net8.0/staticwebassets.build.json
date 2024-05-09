@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "tMTE93ZrlioplO5N/eGqEYpwPk7G6gG/agtUQzRnRAM=",
+  "Source": "BootlegSpotifyApi",
+  "BasePath": "_content/BootlegSpotifyApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

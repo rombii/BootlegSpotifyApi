@@ -1,0 +1,6 @@
+@BootlegSpotifyApi_HostAddress = http://localhost:5160
+
+GET {{BootlegSpotifyApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
