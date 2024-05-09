@@ -1,6 +1,6 @@
 namespace BootlegSpotifyApi.DTOs;
 
-public class SongDTO
+public class SongDto
 {
     public Guid Id { get; set; }
     public required string Title { get; set; }

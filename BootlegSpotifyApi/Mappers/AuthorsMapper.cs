@@ -9,7 +9,7 @@ public class AuthorsMapper
     public async static Task Map(WebApplication app)
     {
         var authorService = app.Services.GetRequiredService<IAuthorsService>();
-        app.MapPost("/addauthor", (AuthorDto authorDto) =>
+        app.MapPost("/add_author", (AuthorDto authorDto) =>
             {
                 authorService.AddAuthor(authorDto);
             })
@@ -21,6 +21,19 @@ public class AuthorsMapper
                 return Results.Ok(result);
             })
             .WithName("GetAuthor")
+            .WithOpenApi();
+        app.MapPut("/update_author/{id}", (Guid id, UpdateAuthorDto authorDto) =>
+            {
+                authorService.UpdateAuthor(id, authorDto);
+                return Results.NoContent();
+            })
+            .WithName("UpdateAuthor")
+            .WithOpenApi();
+        app.MapDelete("/delete_author/{id}", (Guid id) =>
+            {
+                authorService.DeleteAuthor(id);
+            })
+            .WithName("DeleteAuthor")
             .WithOpenApi();
     }
 }

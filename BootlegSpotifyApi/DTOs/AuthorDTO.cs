@@ -9,5 +9,5 @@ public class AuthorDto
     [BsonRepresentation(BsonType.String)]
     public Guid Id { get; set; }
     public required string Name { get; set; }
-    public List<AlbumDTO> Albums { get; set; } = [];
+    public List<AlbumDto> Albums { get; set; } = [];
 }
