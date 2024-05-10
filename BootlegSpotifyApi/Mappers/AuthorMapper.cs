@@ -4,12 +4,12 @@ using MongoDB.Bson;
 
 namespace BootlegSpotifyApi.Mappers;
 
-public class AuthorsMapper
+public class AuthorMapper
 {
     public async static Task Map(WebApplication app)
     {
-        var authorService = app.Services.GetRequiredService<IAuthorsService>();
-        app.MapPost("/add_author", (AuthorDto authorDto) =>
+        var authorService = app.Services.GetRequiredService<IAuthorService>();
+        app.MapPost("/add_author", (AddAuthorDto authorDto) =>
             {
                 authorService.AddAuthor(authorDto);
             })

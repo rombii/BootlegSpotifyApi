@@ -12,7 +12,8 @@ builder.Services.AddSingleton<IMapper, Mapper>();
 builder.Services.AddTransient<IMongoClient, MongoClient>(
     provider => new MongoClient(builder.Configuration.GetConnectionString("MongoDBConnection"))
 );
-builder.Services.AddTransient<IAuthorsService, AuthorsService>();
+builder.Services.AddTransient<IAuthorService, AuthorService>();
+builder.Services.AddTransient<IAlbumService, AlbumService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

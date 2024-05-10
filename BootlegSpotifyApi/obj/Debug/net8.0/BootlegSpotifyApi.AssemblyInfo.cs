@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BootlegSpotifyApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce42e023f469dadc90295a48f3e97ae48423f889")]
 [assembly: System.Reflection.AssemblyProductAttribute("BootlegSpotifyApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BootlegSpotifyApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

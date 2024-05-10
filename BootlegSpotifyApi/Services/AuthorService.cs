@@ -1,25 +1,29 @@
 using System.Net;
 using BootlegSpotifyApi.DTOs;
 using BootlegSpotifyApi.Interfaces.Services;
+using BootlegSpotifyApi.Misc;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace BootlegSpotifyApi.Services;
 
-public class AuthorsService(IMongoClient mongoClient) : IAuthorsService
+public class AuthorService(IMongoClient mongoClient) : IAuthorService
 {
-    public async Task AddAuthor(AuthorDto authorDto)
+    public async Task AddAuthor(AddAuthorDto authorDto)
     {
-        var database = mongoClient.GetDatabase("AudioStreaming");
-        var collection = database.GetCollection<BsonDocument>("Authors");
-        var document = authorDto.ToBsonDocument();
-        await collection.InsertOneAsync(document);
+        var newAuthor = new AuthorDto
+        {
+            Id = Guid.NewGuid(),
+            Name = authorDto.Name,
+            Albums = []
+        };
+        var collection = Helper.GetCollection(mongoClient);
+        await collection.InsertOneAsync(newAuthor);
     }
 
     public async Task<AuthorPageDto> GetAuthor(Guid id)
     {
-        var database = mongoClient.GetDatabase("AudioStreaming");
-        var collection = database.GetCollection<AuthorDto>("Authors");
+        var collection = Helper.GetCollection(mongoClient);
 
         var projection = Builders<AuthorDto>.Projection.Exclude(author => author.Albums.Select(album => album.Songs));
         var filter = Builders<AuthorDto>.Filter.Eq(author => author.Id, id);
@@ -36,8 +40,7 @@ public class AuthorsService(IMongoClient mongoClient) : IAuthorsService
     
     public async Task UpdateAuthor(Guid id, UpdateAuthorDto authorDto)
     {
-        var database = mongoClient.GetDatabase("AudioStreaming");
-        var collection = database.GetCollection<AuthorDto>("Authors");
+        var collection = Helper.GetCollection(mongoClient);
 
         var filter = Builders<AuthorDto>.Filter.Eq(author => author.Id, id);
         var update = Builders<AuthorDto>.Update.Set(author => author.Name, authorDto.Name);
@@ -48,8 +51,7 @@ public class AuthorsService(IMongoClient mongoClient) : IAuthorsService
     
     public async Task DeleteAuthor(Guid id)
     {
-        var database = mongoClient.GetDatabase("AudioStreaming");
-        var collection = database.GetCollection<AuthorDto>("Authors");
+        var collection = Helper.GetCollection(mongoClient);
 
         var filter = Builders<AuthorDto>.Filter.Eq(author => author.Id, id);
         await collection.FindOneAndDeleteAsync(filter);

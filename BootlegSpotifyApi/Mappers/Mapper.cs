@@ -10,6 +10,7 @@ public class Mapper : IMapper
     public async void MapAll(WebApplication app)
     {
         await SongMapper.Map(app);
-        await AuthorsMapper.Map(app);
+        await AuthorMapper.Map(app);
+        await AlbumMapper.Map(app);
     }
 }

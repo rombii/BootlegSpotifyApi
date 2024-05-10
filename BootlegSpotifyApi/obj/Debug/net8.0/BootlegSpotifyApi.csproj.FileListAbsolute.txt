@@ -44,3 +44,4 @@ E:\rider\Projects\BootlegSpotifyApi\BootlegSpotifyApi\bin\Debug\net8.0\ZstdSharp
 E:\rider\Projects\BootlegSpotifyApi\BootlegSpotifyApi\bin\Debug\net8.0\runtimes\linux\native\libmongocrypt.so
 E:\rider\Projects\BootlegSpotifyApi\BootlegSpotifyApi\bin\Debug\net8.0\runtimes\osx\native\libmongocrypt.dylib
 E:\rider\Projects\BootlegSpotifyApi\BootlegSpotifyApi\bin\Debug\net8.0\runtimes\win\native\mongocrypt.dll
+E:\rider\Projects\BootlegSpotifyApi\BootlegSpotifyApi\obj\Debug\net8.0\BootlegSpotifyApi.sourcelink.json
