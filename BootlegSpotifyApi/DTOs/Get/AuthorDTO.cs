@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace BootlegSpotifyApi.DTOs;
+namespace BootlegSpotifyApi.DTOs.Get;
 
 public class AuthorDto
 {

@@ -1,9 +1,13 @@
 using System.Net;
 using BootlegSpotifyApi.DTOs;
+using BootlegSpotifyApi.DTOs.Get;
+using BootlegSpotifyApi.DTOs.Post;
+using BootlegSpotifyApi.DTOs.Put;
 using BootlegSpotifyApi.Interfaces.Services;
 using BootlegSpotifyApi.Misc;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace BootlegSpotifyApi.Services;
 
@@ -29,11 +33,22 @@ public class AuthorService(IMongoClient mongoClient) : IAuthorService
         var filter = Builders<AuthorDto>.Filter.Eq(author => author.Id, id);
         var author = await collection.Find(filter).Project<AuthorDto>(projection).FirstOrDefaultAsync();
         
+        var albumsWithoutSongs = 
+            author.Albums
+                .Where(album => album.ReleaseDate >= DateTime.Now)
+                .Select(album => new AlbumWithoutSongsDto
+            {
+                Title = album.Title, 
+                CoverUrl = album.CoverId, 
+                IsSingle = album.IsSingle,
+                ReleaseDate = album.ReleaseDate,
+            }).ToList();
+
         var authorPage = new AuthorPageDto
         {
             Id = author.Id,
             Name = author.Name,
-            Albums = author.Albums
+            Albums = albumsWithoutSongs
         };
         return authorPage;
     }

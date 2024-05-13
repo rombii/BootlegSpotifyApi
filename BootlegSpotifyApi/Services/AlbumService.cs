@@ -1,30 +1,38 @@
-using BootlegSpotifyApi.DTOs;
+using BootlegSpotifyApi.DTOs.Get;
+using BootlegSpotifyApi.DTOs.Post;
+using BootlegSpotifyApi.DTOs.Put;
+using BootlegSpotifyApi.DTOs.Response;
 using BootlegSpotifyApi.Interfaces.Services;
 using BootlegSpotifyApi.Misc;
+using BootlegSpotifyApi.Validators;
+using FluentValidation;
+using Google.Cloud.Storage.V1;
 using MongoDB.Driver;
 
 namespace BootlegSpotifyApi.Services;
 
 public class AlbumService(IMongoClient mongoClient) : IAlbumService
 {
+    private readonly StorageClient _storageClient = StorageClient.Create();
+    
     public async Task AddAlbum(Guid authorId, AddAlbumDto albumDto)
     {
-        List<SongDto> songs = [];
-        songs.AddRange(albumDto.Songs.Select(song => new SongDto
+        var songsWithId = albumDto.Songs.Select(song => new SongDto
         {
             Id = Guid.NewGuid(),
             Title = song.Title,
             Length = song.Length,
-            Popularity = song.Popularity,
-            SongUrl = song.SongUrl
-        }));
+            FileId = song.FileId
+        }).ToList();
+        
         var newAlbum = new AlbumDto
         {
             Id = Guid.NewGuid(),
             Title = albumDto.Title,
-            CoverUrl = albumDto.CoverUrl,
+            CoverId = albumDto.CoverId,
             IsSingle = albumDto.IsSingle,
-            Songs = songs
+            ReleaseDate = albumDto.ReleaseDate,
+            Songs = songsWithId,
         };
         
         var collection = Helper.GetCollection(mongoClient);
@@ -62,7 +70,7 @@ public class AlbumService(IMongoClient mongoClient) : IAlbumService
         );
         var update = Builders<AuthorDto>.Update
             .Set(author => author.Albums[0].Title, albumDto.Title)
-            .Set(author => author.Albums[0].CoverUrl, albumDto.CoverUrl);
+            .Set(author => author.Albums[0].CoverId, albumDto.CoverId);
 
         await collection.UpdateOneAsync(filter, update);
     }
@@ -82,4 +90,34 @@ public class AlbumService(IMongoClient mongoClient) : IAlbumService
 
         await collection.UpdateOneAsync(filter, update);
     }
+    
+    public async Task<AddedResourceResponseDto> AddCover(IFormFile formFile)
+    {
+        var fileId = Guid.NewGuid();
+        await _storageClient.UploadObjectAsync(
+            "covers_local", 
+            fileId.ToString(),
+            formFile.ContentType,
+            formFile.OpenReadStream());
+        
+        var response = new AddedResourceResponseDto
+        {
+            Id = fileId,
+            ResourceUrl = await Helper.GetFileUrlAsync(fileId, "covers_local")
+        };
+        
+        return response;
+    }
+    
+    public async Task<string> GetCover(Guid id)
+    {
+        var result = await Helper.GetFileUrlAsync(id, "covers_local");
+        return result;
+    }
+    
+    public async Task DeleteCover(Guid id)
+    {
+        await _storageClient.DeleteObjectAsync("covers_local", id.ToString());
+    }
+    
 }

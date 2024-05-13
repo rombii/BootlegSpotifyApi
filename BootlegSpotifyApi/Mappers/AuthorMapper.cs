@@ -1,35 +1,38 @@
 using BootlegSpotifyApi.DTOs;
+using BootlegSpotifyApi.DTOs.Get;
+using BootlegSpotifyApi.DTOs.Post;
+using BootlegSpotifyApi.DTOs.Put;
 using BootlegSpotifyApi.Interfaces.Services;
 using MongoDB.Bson;
 
 namespace BootlegSpotifyApi.Mappers;
 
-public class AuthorMapper
+public static class AuthorMapper
 {
-    public async static Task Map(WebApplication app)
+    public static void MapAuthor(this IEndpointRouteBuilder app)
     {
-        var authorService = app.Services.GetRequiredService<IAuthorService>();
-        app.MapPost("/add_author", (AddAuthorDto authorDto) =>
+        app.MapPost("/add_author", (AddAuthorDto authorDto, IAuthorService authorService) =>
             {
                 authorService.AddAuthor(authorDto);
             })
             .WithName("AddAuthor")
             .WithOpenApi();
-        app.MapGet("/author/{id}", (Guid id) =>
+        app.MapGet("/author/{id}", (Guid id, IAuthorService authorService) =>
             {
                 var result = authorService.GetAuthor(id).Result;
                 return Results.Ok(result);
             })
             .WithName("GetAuthor")
-            .WithOpenApi();
-        app.MapPut("/update_author/{id}", (Guid id, UpdateAuthorDto authorDto) =>
+            .WithOpenApi()
+            .Produces<AuthorPageDto>();
+        app.MapPut("/update_author/{id}", (Guid id, UpdateAuthorDto authorDto, IAuthorService authorService) =>
             {
                 authorService.UpdateAuthor(id, authorDto);
                 return Results.NoContent();
             })
             .WithName("UpdateAuthor")
             .WithOpenApi();
-        app.MapDelete("/delete_author/{id}", (Guid id) =>
+        app.MapDelete("/delete_author/{id}", (Guid id, IAuthorService authorService) =>
             {
                 authorService.DeleteAuthor(id);
             })

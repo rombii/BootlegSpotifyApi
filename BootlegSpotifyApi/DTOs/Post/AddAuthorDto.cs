@@ -1,4 +1,4 @@
-namespace BootlegSpotifyApi.DTOs;
+namespace BootlegSpotifyApi.DTOs.Post;
 
 public class AddAuthorDto
 {

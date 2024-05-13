@@ -1,4 +1,7 @@
 using BootlegSpotifyApi.DTOs;
+using BootlegSpotifyApi.DTOs.Get;
+using BootlegSpotifyApi.DTOs.Post;
+using BootlegSpotifyApi.DTOs.Put;
 
 namespace BootlegSpotifyApi.Interfaces.Services;
 

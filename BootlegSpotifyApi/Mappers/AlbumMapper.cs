@@ -1,38 +1,64 @@
-using BootlegSpotifyApi.DTOs;
+using BootlegSpotifyApi.DTOs.Get;
+using BootlegSpotifyApi.DTOs.Post;
+using BootlegSpotifyApi.DTOs.Put;
 using BootlegSpotifyApi.Interfaces.Services;
+using Microsoft.AspNetCore.Mvc;
+using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 
 namespace BootlegSpotifyApi.Mappers;
 
-public class AlbumMapper
+public static class AlbumMapper
 {
-    public async static Task Map(WebApplication app)
+    private static readonly string[] AllowedContentTypes = ["image/jpeg", "image/png"];
+    public static void MapAlbum(this IEndpointRouteBuilder app)
     {
-        var albumsService = app.Services.GetRequiredService<IAlbumService>();
-        app.MapPost("/add_album", (AddAlbumDto albumDto, Guid authorId) =>
+        app.MapPost("/add_album", (AddAlbumDto albumDto, Guid authorId, IAlbumService albumService) =>
             {
-                albumsService.AddAlbum(authorId, albumDto);
+                albumService.AddAlbum(authorId, albumDto);
             })
             .WithName("AddAlbum")
-            .WithOpenApi();
-        app.MapGet("/album/{id}", (Guid id) =>
+            .WithOpenApi()
+            .AddFluentValidationAutoValidation();
+        app.MapGet("/album/{id}", (Guid id, IAlbumService albumService) =>
             {
-                var result = albumsService.GetAlbum(id).Result;
+                var result = albumService.GetAlbum(id).Result;
                 return Results.Ok(result);
             })
             .WithName("GetAlbum")
-            .WithOpenApi();
-        app.MapPut("/update_album/{id}", (Guid id, UpdateAlbumDto albumDto) =>
+            .WithOpenApi()
+            .Produces<AlbumDto>();
+        app.MapPut("/update_album/{id}", (Guid id, UpdateAlbumDto albumDto, IAlbumService albumService) =>
             {
-                albumsService.UpdateAlbum(id, albumDto);
+                albumService.UpdateAlbum(id, albumDto);
                 return Results.NoContent();
             })
             .WithName("UpdateAlbum")
             .WithOpenApi();
-        app.MapDelete("/delete_album/{id}", (Guid id) =>
+        app.MapDelete("/delete_album/{id}", (Guid id, IAlbumService albumService) =>
             {
-                albumsService.DeleteAlbum(id);
+                albumService.DeleteAlbum(id);
             })
             .WithName("DeleteAlbum")
+            .WithOpenApi();
+        app.MapPost("/upload_cover", ([FromBody] IFormFile formFile, IAlbumService albumService) =>
+            {
+                if (!AllowedContentTypes.Contains(formFile.ContentType))
+                {
+                    return Results.BadRequest("Invalid file type. Only JPEG and PNG files are allowed.");
+                }
+
+                return Results.Ok(albumService.AddCover(formFile).Result);
+            })
+            .WithName("UploadCover")
+            .WithOpenApi()
+            .DisableAntiforgery();
+
+        app.MapDelete("/delete_cover/{id}", (Guid id, IAlbumService albumService) =>
+            {
+                albumService.DeleteCover(id).Wait();
+                return Results.Ok();
+            })
+            .WithName("DeleteCover")
             .WithOpenApi();
     }
 }
